@@ -7,6 +7,7 @@ boardIds= {'backlog': '50xxxxxxxxxxxxxxxxxxxxxx',
            'active': '50xxxxxxxxxxxxxxxxxxxxxx',
            'closed': '50xxxxxxxxxxxxxxxxxxxxxx'}
 
+listIds= {'overview': '50xxxxxxxxxxxxxxxxxxxxxx', 
           'this week': '50xxxxxxxxxxxxxxxxxxxxxx',
           'finished': '50xxxxxxxxxxxxxxxxxxxxxx',
           'general': '50xxxxxxxxxxxxxxxxxxxxxx',

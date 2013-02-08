@@ -220,7 +220,7 @@ if __name__ == '__main__':
         except (httplib2.ServerNotFoundError,
                 httplib.BadStatusLine,
                 ssl.SSLError,
-                trolly.ResourceUnavailable):
+                ResourceUnavailable):
             sys.stderr.write('ERROR: server problem at %d:%02d.\n' % (now.hour, now.minute))
             success= False
         

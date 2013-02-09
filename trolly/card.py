@@ -34,6 +34,16 @@ class Card( TrelloObject ):
             )
 
 
+    def getActions( self, filter='all' ):
+        """
+        Get information for this card. Returns a dictionary of values.
+        """
+        return self.fetchJson( 
+                uri_path = self.base_uri,
+                query_params = {'actions': filter}
+            )
+
+
     def getBoard( self ):
         """
         Get board information for this card. Returns a Board object.

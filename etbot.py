@@ -48,7 +48,7 @@ def manageActive():
     #     move it to "This Week" list in "Active" board
 
     # for each card in "Active" board:
-    #   if card is in "Finished" list:
+    #   if card is in "Finished" or "Overview" list:
     #     remove label "Active" (green)
     #   else:
     #     if card is not labeled "Active" (green):
@@ -100,40 +100,48 @@ def manageActive():
 
         labels= [i['color'] for i in card['labels']]
 
-        # if card is in "Finished" list or "Overview" list:
+        # if card is in "Finished" list:
         if ((card['idList'] == keys.listIds['finished'])
             or (card['idList'] == keys.listIds['overview'])):
-            cardHandle= Card(client, card['id'])
 
-            # remove all labels
-            for l in labels: 
-                cardHandle.removeLabel(l)
-                changesMade= True
+            # remove "Active" (green) labels
+            cardHandle= Card(client, card['id'])
+            if 'green' in labels:
+                cardHandle.removeLabel('green')
+            changesMade= True
                 
         else:
          # if card is not labeled "Active" (green):
             if 'green' not in labels:
 
-                # move it back to its original list & pos (in "Project Backlog" board)
                 cardHandle= Card(client, card['id'])
 
-                # remove project list name from its description
-                desc= markProjectInDesc(card['desc'], None)
-                cardHandle.setDesc(desc)
+                ## if card was moved here from the backlog:
+                #actions= cardHandle.getActions('moveCardToBoard')['actions']
+                #if ((len(actions) > 0) and
+                #    (actions[0]['data']['boardSource']['id'] == keys.boardIds['backlog'])):
+                # if card has an origin project entry
+                if (str(card['id']) in originDB):
 
-                # fallback origin
-                try:
+                    # remove project list name from its description
+                    desc= markProjectInDesc(card['desc'], None)
+                    cardHandle.setDesc(desc)
+
+                    # move it back to its original list & pos (in "Project Backlog" board)
                     origin= originDB[str(card['id'])]
                     cardHandle.moveTo(keys.boardIds['backlog'], origin[0], origin[1])
-                except (ResourceUnavailable, KeyError):
-                    fallbackOrigin= (keys.listIds['general'], 'bottom')
-                    cardHandle.moveTo(keys.boardIds['backlog'], fallbackOrigin[0], fallbackOrigin[1])
+                    # reset labels
+                    for l in labels:
+                        cardHandle.addLabel(l)
 
-                # reset labels
-                for l in labels:
-                    cardHandle.addLabel(l)
-
+                else:
+                    # card was created here or manually moved here;
+                    # mark active (green) and add a generic project origin entry
+                    cardHandle.addLabel('green')
+                    originDB[str(card['id'])]= (keys.listIds['general'], 'top')
+                    
                 changesMade= True
+                    
 
 
     # for each card in Active / Finished that has been archived
